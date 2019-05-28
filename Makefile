@@ -1,5 +1,5 @@
 KDIR ?= /lib/modules/`uname -r`/build
-obj-m := blake2s.o
+obj-m := blake2s.o blake2b.o
 
 default:
 	$(MAKE) -C $(KDIR) M=$$PWD
