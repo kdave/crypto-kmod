@@ -38,7 +38,7 @@ enum blake2b_constant
 	BLAKE2B_PERSONALBYTES = 16
 };
 
-typedef struct blake2s_state__
+struct blake2s_state
 {
 	u32      h[8];
 	u32      t[2];
@@ -47,9 +47,9 @@ typedef struct blake2s_state__
 	size_t   buflen;
 	size_t   outlen;
 	u8  last_node;
-} blake2s_state;
+};
 
-typedef struct blake2b_state__
+struct blake2b_state
 {
 	u64      h[8];
 	u64      t[2];
@@ -58,27 +58,27 @@ typedef struct blake2b_state__
 	size_t   buflen;
 	size_t   outlen;
 	u8       last_node;
-} blake2b_state;
+};
 
-typedef struct blake2sp_state__
+struct blake2sp_state
 {
-	blake2s_state S[8][1];
-	blake2s_state R[1];
+	struct blake2s_state S[8][1];
+	struct blake2s_state R[1];
 	u8            buf[8 * BLAKE2S_BLOCKBYTES];
 	size_t        buflen;
 	size_t        outlen;
-} blake2sp_state;
+};
 
-typedef struct blake2bp_state__
+struct blake2bp_state
 {
-	blake2b_state S[4][1];
-	blake2b_state R[1];
+	struct blake2b_state S[4][1];
+	struct blake2b_state R[1];
 	u8            buf[4 * BLAKE2B_BLOCKBYTES];
 	size_t        buflen;
 	size_t        outlen;
-} blake2bp_state;
+};
 
-struct blake2s_param__
+struct blake2s_param
 {
 	u8  digest_length; /* 1 */
 	u8  key_length;    /* 2 */
@@ -93,9 +93,7 @@ struct blake2s_param__
 	u8  personal[BLAKE2S_PERSONALBYTES];  /* 32 */
 } __packed;
 
-typedef struct blake2s_param__ blake2s_param;
-
-struct blake2b_param__
+struct blake2b_param
 {
 	u8  digest_length; /* 1 */
 	u8  key_length;    /* 2 */
@@ -111,59 +109,57 @@ struct blake2b_param__
 	u8  personal[BLAKE2B_PERSONALBYTES];  /* 64 */
 } __packed;
 
-typedef struct blake2b_param__ blake2b_param;
-
-typedef struct blake2xs_state__
+struct blake2xs_state
 {
-	blake2s_state S[1];
-	blake2s_param P[1];
-} blake2xs_state;
+	struct blake2s_state S[1];
+	struct blake2s_param P[1];
+};
 
-typedef struct blake2xb_state__
+struct blake2xb_state
 {
-	blake2b_state S[1];
-	blake2b_param P[1];
-} blake2xb_state;
+	struct blake2b_state S[1];
+	struct blake2b_param P[1];
+};
 
 /* Padded structs result in a compile-time error */
 enum {
-	BLAKE2_DUMMY_1 = 1 / (sizeof(blake2s_param) == BLAKE2S_OUTBYTES),
-	BLAKE2_DUMMY_2 = 1 / (sizeof(blake2b_param) == BLAKE2B_OUTBYTES)
+	BLAKE2_DUMMY_1 = 1 / (sizeof(struct blake2s_param) == BLAKE2S_OUTBYTES),
+	BLAKE2_DUMMY_2 = 1 / (sizeof(struct blake2b_param) == BLAKE2B_OUTBYTES)
 };
 
 /* Streaming API */
-int blake2s_init(blake2s_state *S, size_t outlen);
-int blake2s_init_key(blake2s_state *S, size_t outlen, const void *key, size_t keylen);
-int blake2s_init_param(blake2s_state *S, const blake2s_param *P);
-int blake2s_update(blake2s_state *S, const void *in, size_t inlen);
-int blake2s_final(blake2s_state *S, void *out, size_t outlen);
+int blake2s_init(struct blake2s_state *S, size_t outlen);
+int blake2s_init_key(struct blake2s_state *S, size_t outlen, const void *key, size_t keylen);
+int blake2s_init_param(struct blake2s_state *S, const struct blake2s_param *P);
+int blake2s_update(struct blake2s_state *S, const void *in, size_t inlen);
+int blake2s_final(struct blake2s_state *S, void *out, size_t outlen);
 
-int blake2b_init(blake2b_state *S, size_t outlen);
-int blake2b_init_key(blake2b_state *S, size_t outlen, const void *key, size_t keylen);
-int blake2b_init_param(blake2b_state *S, const blake2b_param *P);
-int blake2b_update(blake2b_state *S, const void *in, size_t inlen);
-int blake2b_final(blake2b_state *S, void *out, size_t outlen);
+int blake2b_init(struct blake2b_state *S, size_t outlen);
+int blake2b_init_key(struct blake2b_state *S, size_t outlen, const void *key, size_t keylen);
+int blake2b_init_param(struct blake2b_state *S, const struct blake2b_param *P);
+int blake2b_update(struct blake2b_state *S, const void *in, size_t inlen);
+int blake2b_final(struct blake2b_state *S, void *out, size_t outlen);
 
-int blake2sp_init(blake2sp_state *S, size_t outlen);
-int blake2sp_init_key(blake2sp_state *S, size_t outlen, const void *key, size_t keylen);
-int blake2sp_update(blake2sp_state *S, const void *in, size_t inlen);
-int blake2sp_final(blake2sp_state *S, void *out, size_t outlen);
+int blake2sp_init(struct blake2sp_state *S, size_t outlen);
+int blake2sp_init_key(struct blake2sp_state *S, size_t outlen, const void *key, size_t keylen);
+int blake2sp_update(struct blake2sp_state *S, const void *in, size_t inlen);
+int blake2sp_final(struct blake2sp_state *S, void *out, size_t outlen);
 
-int blake2bp_init(blake2bp_state *S, size_t outlen);
-int blake2bp_init_key(blake2bp_state *S, size_t outlen, const void *key, size_t keylen);
-int blake2bp_update(blake2bp_state *S, const void *in, size_t inlen);
-int blake2bp_final(blake2bp_state *S, void *out, size_t outlen);
+int blake2bp_init(struct blake2bp_state *S, size_t outlen);
+int blake2bp_init_key(struct blake2bp_state *S, size_t outlen, const void *key, size_t keylen);
+int blake2bp_update(struct blake2bp_state *S, const void *in, size_t inlen);
+int blake2bp_final(struct blake2bp_state *S, void *out, size_t outlen);
 
 /* Variable output length API */
-int blake2xs_init(blake2xs_state *S, const size_t outlen);
-int blake2xs_init_key(blake2xs_state *S, const size_t outlen, const void *key, size_t keylen);
-int blake2xs_update(blake2xs_state *S, const void *in, size_t inlen);
-int blake2xs_final(blake2xs_state *S, void *out, size_t outlen);
+int blake2xs_init(struct blake2xs_state *S, const size_t outlen);
+int blake2xs_init_key(struct blake2xs_state *S, const size_t outlen, const void *key, size_t keylen);
+int blake2xs_update(struct blake2xs_state *S, const void *in, size_t inlen);
+int blake2xs_final(struct blake2xs_state *S, void *out, size_t outlen);
 
-int blake2xb_init(blake2xb_state *S, const size_t outlen);
-int blake2xb_init_key(blake2xb_state *S, const size_t outlen, const void *key, size_t keylen);
-int blake2xb_update(blake2xb_state *S, const void *in, size_t inlen);
-int blake2xb_final(blake2xb_state *S, void *out, size_t outlen);
+int blake2xb_init(struct blake2xb_state *S, const size_t outlen);
+int blake2xb_init_key(struct blake2xb_state *S, const size_t outlen, const void *key, size_t keylen);
+int blake2xb_update(struct blake2xb_state *S, const void *in, size_t inlen);
+int blake2xb_final(struct blake2xb_state *S, void *out, size_t outlen);
 
 /* Simple API */
 int blake2s(void *out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen);
