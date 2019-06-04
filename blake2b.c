@@ -13,26 +13,12 @@
    https://blake2.net.
 */
 
-#ifdef __KERNEL__
 #include <asm/unaligned.h>
 #include <crypto/internal/hash.h>
 #include <linux/module.h>
 #include <linux/string.h>
 #include <linux/kernel.h>
 #include <linux/string.h>
-#else
-#include <stdio.h>
-#include <stdint.h>
-
-typedef uint8_t u8;
-typedef uint16_t u16;
-typedef uint32_t u32;
-typedef uint64_t u64;
-
-#define printk	printf
-#define KERN_DEBUG
-
-#endif
 
 #include "blake2.h"
 #include "blake2-impl.h"
@@ -326,8 +312,6 @@ struct chksum_ctx {
 	u8 key[BLAKE2B_KEYBYTES];
 };
 
-#ifdef __KERNEL__
-
 static int chksum_init(struct shash_desc *desc)
 {
 	struct chksum_ctx *mctx = crypto_shash_ctx(desc->tfm);
@@ -445,82 +429,8 @@ static void __exit blake2b_mod_fini(void)
 subsys_initcall(blake2b_mod_init);
 module_exit(blake2b_mod_fini);
 
-MODULE_AUTHOR("kdave");
+MODULE_AUTHOR("kdave@kernel.org");
 MODULE_DESCRIPTION("BLAKE2b reference implementation");
 MODULE_LICENSE("GPL");
 MODULE_ALIAS_CRYPTO("blake2b");
 MODULE_ALIAS_CRYPTO("blake2b-generic");
-
-#else
-
-int main() {
-	char bigarray[4096];
-	struct chksum_ctx mctx[1];
-	struct chksum_desc_ctx ctx[1];
-	u8 result[BLAKE2B_OUTBYTES];;
-	int i;
-	int length;
-	char *data;
-	int ret;
-	int defaultkey = 1;
-
-	if (defaultkey) {
-		for (i = 0; i < BLAKE2B_KEYBYTES; i++)
-			mctx->key[i] = (u8)i;
-		printf("KEY___: ");
-		for (i = 0; i < BLAKE2B_KEYBYTES; i++)
-			printf("%02hhx", (u8)mctx->key[i]);
-		printf("\n");
-		/* Default key:
-		{
-		    "hash": "blake2b",
-		    "in": "",
-		    "key": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
-		    "out": "48a8997da407876b3d79c0d92325ad3b89cbb754d86ab71aee047ad345fd2c49"
-		},
-		 */
-		ret = blake2b_init_key(ctx->S, BLAKE2B_OUTBYTES, mctx->key, BLAKE2B_KEYBYTES);
-		if (ret) {
-			printf("ERROR: init %d\n", ret);
-			return 1;
-		}
-	} else {
-		printf("KEY___: empty\n");
-		/* No key:
-		 * {
-			"hash": "blake2b",
-			"in": "",
-			"key": "",
-			"out": "69217a3079908094e11121d042354a7c1f55b6482ca1a51e1b250dfd1ed0eef9"
-		},
-		 */
-		ret = blake2b_init(ctx->S, BLAKE2B_OUTBYTES);
-		if (ret) {
-			printf("ERROR: init %d\n", ret);
-			return 1;
-		}
-	}
-
-	data = bigarray;
-	length = 0;
-	ret = blake2b_update(ctx->S, data, length);
-	if (ret) {
-		printf("ERROR: update %d\n", ret);
-		return 1;
-	}
-
-	ret = blake2b_final(ctx->S, result, BLAKE2B_OUTBYTES);
-	if (ret) {
-		printf("ERROR: final %d\n", ret);
-		return 1;
-	}
-
-	printf("OUTPUT: ");
-	for (i = 0; i < BLAKE2B_OUTBYTES; i++)
-		printf("%02hhx", (u8)result[i]);
-	printf("\n");
-
-	return 0;
-}
-
-#endif		/* __KERNEL__ */
