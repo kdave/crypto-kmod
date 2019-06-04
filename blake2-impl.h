@@ -20,7 +20,7 @@
 
 static inline u32 load32(const void *src)
 {
-#if defined(NATIVE_LITTLE_ENDIAN)
+#ifdef __LITTLE_ENDIAN
 	u32 w;
 	memcpy(&w, src, sizeof w);
 	return w;
@@ -35,7 +35,7 @@ static inline u32 load32(const void *src)
 
 static inline u64 load64(const void *src)
 {
-#if defined(NATIVE_LITTLE_ENDIAN)
+#ifdef __LITTLE_ENDIAN
 	u64 w;
 	memcpy(&w, src, sizeof w);
 	return w;
@@ -54,7 +54,7 @@ static inline u64 load64(const void *src)
 
 static inline u16 load16(const void *src)
 {
-#if defined(NATIVE_LITTLE_ENDIAN)
+#ifdef __LITTLE_ENDIAN
 	u16 w;
 	memcpy(&w, src, sizeof w);
 	return w;
@@ -67,7 +67,7 @@ static inline u16 load16(const void *src)
 
 static inline void store16(void *dst, u16 w)
 {
-#if defined(NATIVE_LITTLE_ENDIAN)
+#ifdef __LITTLE_ENDIAN
 	memcpy(dst, &w, sizeof w);
 #else
 	u8 *p = (u8 *)dst;
@@ -79,7 +79,7 @@ static inline void store16(void *dst, u16 w)
 
 static inline void store32(void *dst, u32 w)
 {
-#if defined(NATIVE_LITTLE_ENDIAN)
+#ifdef __LITTLE_ENDIAN
 	memcpy(dst, &w, sizeof w);
 #else
 	u8 *p = (u8 *)dst;
@@ -92,7 +92,7 @@ static inline void store32(void *dst, u32 w)
 
 static inline void store64(void *dst, u64 w)
 {
-#if defined(NATIVE_LITTLE_ENDIAN)
+#ifdef __LITTLE_ENDIAN
 	memcpy(dst, &w, sizeof w);
 #else
 	u8 *p = (u8 *)dst;
