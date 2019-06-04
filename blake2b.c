@@ -280,41 +280,6 @@ int blake2b_final(struct blake2b_state *S, void *out, size_t outlen)
 	return 0;
 }
 
-/* inlen, at least, should be u64. Others can be size_t. */
-int blake2b(void *out, size_t outlen, const void *in, size_t inlen,
-	    const void *key, size_t keylen)
-{
-	struct blake2b_state S[1];
-
-	/* Verify parameters */
-	if (NULL == in && inlen > 0)
-		return -1;
-
-	if (NULL == out)
-		return -1;
-
-	if (NULL == key && keylen > 0)
-		return -1;
-
-	if (!outlen || outlen > BLAKE2B_OUTBYTES)
-		return -1;
-
-	if (keylen > BLAKE2B_KEYBYTES)
-		return -1;
-
-	if (keylen > 0) {
-		if (blake2b_init_key(S, outlen, key, keylen) < 0)
-			return -1;
-	} else {
-		if (blake2b_init(S, outlen) < 0)
-			return -1;
-	}
-
-	blake2b_update(S, (const u8 *)in, inlen);
-	blake2b_final(S, out, outlen);
-	return 0;
-}
-
 struct chksum_desc_ctx {
 	struct blake2b_state S[1];
 };

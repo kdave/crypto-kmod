@@ -161,17 +161,4 @@ int blake2xb_init_key(struct blake2xb_state *S, const size_t outlen, const void 
 int blake2xb_update(struct blake2xb_state *S, const void *in, size_t inlen);
 int blake2xb_final(struct blake2xb_state *S, void *out, size_t outlen);
 
-/* Simple API */
-int blake2s(void *out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen);
-int blake2b(void *out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen);
-
-int blake2sp(void *out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen);
-int blake2bp(void *out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen);
-
-int blake2xs(void *out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen);
-int blake2xb(void *out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen);
-
-/* This is simply an alias for blake2b */
-int blake2(void *out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen);
-
 #endif

@@ -275,40 +275,6 @@ int blake2s_final(struct blake2s_state *S, void *out, size_t outlen)
 	return 0;
 }
 
-int blake2s(void *out, size_t outlen, const void *in, size_t inlen,
-	    const void *key, size_t keylen)
-{
-	struct blake2s_state S[1];
-
-	/* Verify parameters */
-	if (NULL == in && inlen > 0)
-		return -1;
-
-	if (NULL == out)
-		return -1;
-
-	if (NULL == key && keylen > 0)
-		return -1;
-
-	if (!outlen || outlen > BLAKE2S_OUTBYTES)
-		return -1;
-
-	if (keylen > BLAKE2S_KEYBYTES)
-		return -1;
-
-	if (keylen > 0) {
-		if (blake2s_init_key(S, outlen, key, keylen) < 0)
-			return -1;
-	} else {
-		if (blake2s_init(S, outlen) < 0)
-			return -1;
-	}
-
-	blake2s_update(S, (const u8 *)in, inlen);
-	blake2s_final(S, out, outlen);
-	return 0;
-}
-
 /* crypto API glue code */
 
 struct chksum_desc_ctx {
