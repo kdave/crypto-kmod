@@ -150,8 +150,7 @@ int blake2s_init_key(blake2s_state *S, size_t outlen, const void *key,
 		memset(block, 0, BLAKE2S_BLOCKBYTES);
 		memcpy(block, key, keylen);
 		blake2s_update(S, block, BLAKE2S_BLOCKBYTES);
-		/* Burn the key from stack */
-		secure_zero_memory(block, BLAKE2S_BLOCKBYTES);
+		memzero_explicit(block, BLAKE2S_BLOCKBYTES);
 	}
 	return 0;
 }
@@ -271,7 +270,7 @@ int blake2s_final(blake2s_state *S, void *out, size_t outlen)
 		store32(buffer + sizeof(S->h[i]) * i, S->h[i]);
 
 	memcpy(out, buffer, outlen);
-	secure_zero_memory(buffer, sizeof(buffer));
+	memzero_explicit(buffer, sizeof(buffer));
 	return 0;
 }
 

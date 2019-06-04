@@ -141,11 +141,4 @@ static inline u64 rotr64(const u64 w, const unsigned c)
 	return (w >> c) | (w << (64 - c));
 }
 
-/* prevents compiler optimizing out memset() */
-static inline void secure_zero_memory(void *v, size_t n)
-{
-	static void *(*const volatile memset_v)(void *, int, size_t) = &memset;
-	memset_v(v, 0, n);
-}
-
 #endif
