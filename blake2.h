@@ -89,7 +89,6 @@ struct blake2s_param__
 	u16 xof_length;    /* 14 */
 	u8  node_depth;    /* 15 */
 	u8  inner_length;  /* 16 */
-	/* u8  reserved[0]; */
 	u8  salt[BLAKE2S_SALTBYTES]; /* 24 */
 	u8  personal[BLAKE2S_PERSONALBYTES];  /* 32 */
 } __packed;
