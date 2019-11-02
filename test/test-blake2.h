@@ -17,7 +17,13 @@
 #ifndef BLAKE2_H
 #define BLAKE2_H
 
-#include <linux/compiler.h>
+#include <asm/types.h>
+typedef __u32 u32;
+typedef __u64 u64;
+typedef __u16 u16;
+typedef __u8 u8;
+typedef __s64 s64;
+typedef __s32 s32;
 #include <stddef.h>
 
 enum blake2s_constant
@@ -59,7 +65,24 @@ struct blake2b_state
 	size_t   outlen;
 	u8       last_node;
 };
-typedef struct blake2b_state blake2b_state;
+
+struct blake2sp_state
+{
+	struct blake2s_state S[8][1];
+	struct blake2s_state R[1];
+	u8            buf[8 * BLAKE2S_BLOCKBYTES];
+	size_t        buflen;
+	size_t        outlen;
+};
+
+struct blake2bp_state
+{
+	struct blake2b_state S[4][1];
+	struct blake2b_state R[1];
+	u8            buf[4 * BLAKE2B_BLOCKBYTES];
+	size_t        buflen;
+	size_t        outlen;
+};
 
 struct blake2s_param
 {
@@ -74,7 +97,7 @@ struct blake2s_param
 	u8  inner_length;  /* 16 */
 	u8  salt[BLAKE2S_SALTBYTES]; /* 24 */
 	u8  personal[BLAKE2S_PERSONALBYTES];  /* 32 */
-} __packed;
+} __attribute__((__packed__));
 
 struct blake2b_param
 {
@@ -90,7 +113,25 @@ struct blake2b_param
 	u8  reserved[14];  /* 32 */
 	u8  salt[BLAKE2B_SALTBYTES]; /* 48 */
 	u8  personal[BLAKE2B_PERSONALBYTES];  /* 64 */
-} __packed;
+} __attribute__((__packed__));
+
+struct blake2xs_state
+{
+	struct blake2s_state S[1];
+	struct blake2s_param P[1];
+};
+
+struct blake2xb_state
+{
+	struct blake2b_state S[1];
+	struct blake2b_param P[1];
+};
+
+/* Padded structs result in a compile-time error */
+enum {
+	BLAKE2_DUMMY_1 = 1 / (sizeof(struct blake2s_param) == BLAKE2S_OUTBYTES),
+	BLAKE2_DUMMY_2 = 1 / (sizeof(struct blake2b_param) == BLAKE2B_OUTBYTES)
+};
 
 /* Streaming API */
 int blake2s_init(struct blake2s_state *S, size_t outlen);

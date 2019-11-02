@@ -5,11 +5,7 @@ Done:
 
 * BLAKE2s
 * BLAKE2b
-
-Todo:
-
-* BLAKE2p? modes
-* self-tests
+  * generate assembly for SSE2, SSE4.1, AVX2
 
 Testing:
 
@@ -17,4 +13,11 @@ Testing:
 $ make
 $ sudo insmod blake2s.ko
 $ echo 'hi' | kcapi-dgst -c blake2s --hex
+```
+
+Generators
+
+```
+$ make gen
+$ make
 ```
